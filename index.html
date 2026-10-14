@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <title>Mario Jump - Raul</title>
+</head>
+<body>
+
+    <div class="game-board">
+        <!-- Tela Inicial / Boas-vindas -->
+        <div class="screen start-screen" id="start-screen">
+            <h1>Bem-vindo ao Jogo do Raul!</h1>
+            <p>Ajude o Raul a desviar dos obstáculos pulando no momento certo!</p>
+            <div class="buttons">
+                <button id="start-btn">Começar o jogo</button>
+                <button id="about-btn">Sobre o jogo</button>
+            </div>
+        </div>
+
+        <!-- Tela Sobre o Jogo -->
+        <div class="screen about-screen hidden" id="about-screen">
+            <h2>Sobre o Jogo</h2>
+            <p>Este jogo foi desenvolvido no estilo runner clássico. Pressione qualquer tecla ou toque na tela para fazer o Raul pular e desviar dos canos!</p>
+            <button id="back-btn">Voltar</button>
+        </div>
+
+        <!-- Tela Game Over -->
+        <div class="screen game-over-screen hidden" id="game-over-screen">
+            <h1>Fim de Jogo!</h1>
+            <button id="restart-btn">Jogar Novamente</button>
+        </div>
+
+        <!-- Elementos do Jogo -->
+        <img src="clouds.png" class="clouds" alt="Nuvens">
+        <img src="raul correndo.gif" class="raul" alt="Raul">
+        <img src="pipe.png" class="pipe" alt="Cano">
+    </div>
+
+</body>
+</html>
