@@ -13,16 +13,17 @@ const backBtn = document.getElementById('back-btn');
 const restartBtn = document.getElementById('restart-btn');
 
 let gameLoop = null;
+let jumpTimeout = null;
 let isPlaying = false;
 
 // Função de Pulo
 const jump = () => {
     if (!isPlaying) return;
-    
+
     if (!raul.classList.contains('jump')) {
         raul.classList.add('jump');
 
-        setTimeout(() => {
+        jumpTimeout = setTimeout(() => {
             raul.classList.remove('jump');
         }, 1000);
     }
@@ -34,6 +35,10 @@ const startGame = () => {
     startScreen.classList.add('hidden');
     aboutScreen.classList.add('hidden');
     gameOverScreen.classList.add('hidden');
+
+    // Garante que nenhum pulo antigo interfira na nova partida
+    clearTimeout(jumpTimeout);
+    raul.classList.remove('jump');
 
     // Reseta estado do Raul
     raul.src = 'raul correndo.gif';
@@ -50,21 +55,25 @@ const startGame = () => {
     isPlaying = true;
 
     // Loop de colisão
+    clearInterval(gameLoop);
     gameLoop = setInterval(() => {
         const pipePosition = pipe.offsetLeft;
         const raulPosition = +window.getComputedStyle(raul).bottom.replace('px', '');
 
         if (pipePosition <= 120 && pipePosition > 0 && raulPosition < 65) {
-            // Para a animação do cano e do Raul na posição exata
+            // Para o cano na posição exata
             pipe.style.animation = 'none';
             pipe.style.left = `${pipePosition}px`;
 
+            // Cancela o pulo e coloca o Raul no chão (mesma altura do início)
+            clearTimeout(jumpTimeout);
+            raul.classList.remove('jump');
             raul.style.animation = 'none';
-            raul.style.bottom = `${raulPosition}px`;
+            raul.style.bottom = '-60px';
 
-            raul.src = 'game-over.png';
-            raul.style.width = '100px';
-            raul.style.marginLeft = '20px';
+            raul.src = 'gameover.png';
+            raul.style.width = '170px';
+            raul.style.marginLeft = '0px';
 
             clearInterval(gameLoop);
             isPlaying = false;
