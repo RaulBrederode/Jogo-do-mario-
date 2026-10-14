@@ -1,4 +1,4 @@
-# jogoMario
+# Jogo do Mario
 
 ## Descrição
 Recriação do clássico jogo Mario, desenvolvida como parte da atividade de Front-End. O projeto inclui tela inicial, interface do jogador e mecânicas básicas do jogo.
@@ -44,4 +44,4 @@ jogoMario/
 └── README.md
 ```
 
-# Jogo-do-mario
+# Jogo do Mario
