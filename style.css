@@ -1,130 +1,108 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+const raul = document.querySelector('.raul');
+const pipe = document.querySelector('.pipe');
+
+// Elementos das telas
+const startScreen = document.getElementById('start-screen');
+const aboutScreen = document.getElementById('about-screen');
+const gameOverScreen = document.getElementById('game-over-screen');
+
+// Botões
+const startBtn = document.getElementById('start-btn');
+const aboutBtn = document.getElementById('about-btn');
+const backBtn = document.getElementById('back-btn');
+const restartBtn = document.getElementById('restart-btn');
+
+let gameLoop = null;
+let jumpTimeout = null;
+let isPlaying = false;
+
+// Função de Pulo
+const jump = () => {
+    if (!isPlaying) return;
+
+    if (!raul.classList.contains('jump')) {
+        raul.classList.add('jump');
+
+        jumpTimeout = setTimeout(() => {
+            raul.classList.remove('jump');
+        }, 1000);
+    }
 }
 
-.game-board {
-    height: 500px;
-    width: 100%;
-    border-bottom: 15px solid #26d826;
-    margin: 0 auto;
-    position: relative;
-    overflow: hidden;
-    background-image: linear-gradient(to bottom, #87CEEB, #fff);
+// Iniciar o Jogo
+const startGame = () => {
+    // Esconde as telas
+    startScreen.classList.add('hidden');
+    aboutScreen.classList.add('hidden');
+    gameOverScreen.classList.add('hidden');
+
+    // Garante que nenhum pulo antigo interfira na nova partida
+    clearTimeout(jumpTimeout);
+    raul.classList.remove('jump');
+
+    // Reseta estado do Raul
+    raul.src = 'raul correndo.gif';
+    raul.style.width = '100px';
+    raul.style.marginLeft = '0px';
+    raul.style.bottom = '0px';
+    raul.style.animation = '';
+
+    // Reseta e ativa o pipe
+    pipe.style.animation = '';
+    pipe.style.left = '';
+    pipe.classList.add('running');
+
+    isPlaying = true;
+
+    // Loop de colisão
+    clearInterval(gameLoop);
+    gameLoop = setInterval(() => {
+        const pipePosition = pipe.offsetLeft;
+        const raulPosition = +window.getComputedStyle(raul).bottom.replace('px', '');
+
+        if (pipePosition <= 120 && pipePosition > 0 && raulPosition < 65) {
+            // Para o cano na posição exata
+            pipe.style.animation = 'none';
+            pipe.style.left = `${pipePosition}px`;
+
+            // Cancela o pulo e coloca o Raul no chão (mesma altura do início)
+            clearTimeout(jumpTimeout);
+            raul.classList.remove('jump');
+            raul.style.animation = 'none';
+            raul.style.bottom = '-60px';
+
+            raul.src = 'gameover.png';
+            raul.style.width = '170px';
+            raul.style.marginLeft = '0px';
+
+            clearInterval(gameLoop);
+            isPlaying = false;
+
+            // Exibe a tela de Game Over após um pequeno atraso
+            setTimeout(() => {
+                gameOverScreen.classList.remove('hidden');
+            }, 500);
+        }
+    }, 10);
 }
 
-/* Modificações no Pipe: animação controlada via classe no JS */
-.pipe {
-    position: absolute;
-    bottom: 0;
-    width: 65px;
-    display: none; /* Inicia oculto até o jogo começar */
-}
+// Eventos de clique dos botões
+startBtn.addEventListener('click', startGame);
 
-.pipe.running {
-    display: block;
-    animation: pipe-animation 2s linear infinite;
-}
+aboutBtn.addEventListener('click', () => {
+    startScreen.classList.add('hidden');
+    aboutScreen.classList.remove('hidden');
+});
 
-.clouds {
-    position: absolute;
-    width: 550px;
-    animation: clouds-animation 20s linear infinite;
-}
+backBtn.addEventListener('click', () => {
+    aboutScreen.classList.add('hidden');
+    startScreen.classList.remove('hidden');
+});
 
-.raul {
-    position: absolute;
-    bottom: 0;
-    width: 100px;
-}
+restartBtn.addEventListener('click', startGame);
 
-.jump {
-    animation: raul-animation 1s ease-out;
-}
-
-/* Telas / Overlays */
-.screen {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.65);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    text-align: center;
-    padding: 20px;
-    z-index: 10;
-}
-
-.hidden {
-    display: none !important;
-}
-
-.screen h1 {
-    font-size: 2.2rem;
-    margin-bottom: 15px;
-    text-shadow: 2px 2px 4px #000;
-}
-
-.screen h2 {
-    font-size: 1.8rem;
-    margin-bottom: 15px;
-}
-
-.screen p {
-    font-size: 1.1rem;
-    max-width: 400px;
-    margin-bottom: 25px;
-    line-height: 1.4;
-}
-
-.buttons {
-    display: flex;
-    gap: 15px;
-}
-
-button {
-    padding: 12px 24px;
-    font-size: 1rem;
-    font-weight: bold;
-    color: white;
-    background-color: #26d826;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-}
-
-button:hover {
-    background-color: #1eb31e;
-    transform: scale(1.05);
-}
-
-button:active {
-    transform: scale(0.98);
-}
-
-/* Animações */
-@keyframes raul-animation {
-    0% { bottom: 0; }
-    40% { bottom: 180px; }
-    50% { bottom: 180px; }
-    60% { bottom: 180px; }
-    100% { bottom: 0; }
-}
-
-@keyframes pipe-animation {
-    0% { right: -80px; }
-    100% { right: 100%; }
-}
-
-@keyframes clouds-animation {
-    0% { right: -550px; }
-    100% { right: 100%; }
-}
+// Controle do Pulo
+document.addEventListener('keydown', (e) => {
+    // Permite pulo com qualquer tecla ou barra de espaço
+    jump();
+});
